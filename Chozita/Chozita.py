@@ -26,48 +26,65 @@ class Chozita:
         """
         return base64.urlsafe_b64encode(hashlib.sha256(Password.encode()).digest()[:32])
 
-    def Cifrar(self, Objetivo, Password, Anotacion=None, User=None):
+    def cifrar(self, archivo_path: str, password: str, comentario: str = None) -> tuple[bool, str]:
         """
-        Cifra el contenido de un archivo y guarda los datos en un archivo JSON.
+        Cifra el contenido de un archivo y guarda el contenido cifrado en un JSON.
 
-        Parámetros:
-        - Objetivo: Ruta del archivo a cifrar.
-        - Password: Contraseña para el cifrado.
-        - Anotación: Comentario sobre el archivo (Opcional).
-        - Usuario: Nombre del usuario (Opcional).
+        Args:
+            archivo_path (str): La ruta del archivo que deseas cifrar.
+            password (str): Contraseña para cifrar el contenido.
+            comentario (str): Comentario adicional para dejar en el JSON.
 
-        Guarda el archivo cifrado como `NombreArchivo.json`.
+        Returns:
+            tuple[bool, str]:
+                bool: True si el cifrado fue correcto, False en caso contrario.
+                str: Mensaje de error en caso de que bool sea False; de lo contrario, una cadena vacía.
         """
-        with open(Objetivo, 'rb') as ArchivoObjetivo:
-            DatosArchivo = ArchivoObjetivo.read()
-            Datos64 = base64.b64encode(DatosArchivo).decode('utf-8')
+        try:
+            # Abrir el archivo a cifrar
+            with open(archivo_path, 'rb') as file:
+                datos = file.read()
+                # pasar los datos a 64
+                datos64 = base64.b64encode(datos).decode('utf-8')
 
-            ObjetoFernet = Fernet(self._password(Password))
-            ContenidoCifrado = ObjetoFernet.encrypt(
-                Datos64.encode()).decode('utf-8')
-            if os.path.dirname(Objetivo) != '':
-                Directorio, NombreArchivo = os.path.split(Objetivo)
-                Nombre, Extension = os.path.splitext(NombreArchivo)
-                PATH = Directorio + '/' + Nombre + ".json"
-            else:
-                Nombre, Extension = os.path.splitext(Objetivo)
-                PATH = Nombre + '.json'
-            FechaActual = datetime.now()
-            FechaFormateada = FechaActual.strftime("%Y-%m-%d %H:%M:%S")
+                # crear la instancia fernet
+                instancia_fernet = Fernet(self._password(password))
 
-            DatosJson = {
-                "Nombre": Nombre,
-                "Extension": Extension,
-                "Fecha": FechaFormateada,
-                "Anotacion": Anotacion,
-                "User": User,
-                "Contenido": ContenidoCifrado
-            }
+                # cifrar los datos (datos64)
+                datos_cifrados = instancia_fernet.encrypt(
+                    datos64.encode()).decode('utf-8')
 
-            with open(PATH, 'w') as ArchivoCifrado:
-                json.dump(DatosJson, ArchivoCifrado, indent=4)
+                # Verificar si hay un '/' en la ruta para el manejo del path
+                if os.path.dirname(archivo_path) != '':
+                    # Lectura del path para extrar datos nesesarios
+                    path_archivo, nombre_archivo = os.path.split(archivo_path)
+                    datos_nombre, datos_extensio = os.path.splitext(
+                        nombre_archivo)
 
-    def descifrar_json(self, json_path: str, password: str) -> tuple[bool, str]:
+                    # construccion del path final
+                    path = os.path.join(path_archivo, datos_nombre, + '.json')
+                else:
+                    datos_nombre, datos_extensio = os.path.splitext(
+                        archivo_path)
+                    # construccion del path final
+                    path = os.path.join(os.getcwd(), datos_nombre + '.json')
+
+                # Preparar los datos para guardar en el archivo JSON
+                datos_paquete = {
+                    "Nombre": datos_nombre,
+                    "Extension": datos_extensio,
+                    "Anotacion": comentario,
+                    "Contenido": datos_cifrados
+                }
+
+                # Escribir los datos cifrados en el archivo JSON
+                with open(path, 'w') as archivo:
+                    json.dump(datos_paquete, archivo, indent=4)
+                    return [True, '']
+        except Exception as Error:
+            return [False, str(Error)]
+
+    def descifrar(self, json_path: str, password: str) -> tuple[bool, str]:
         """
         Descifra el contenido de un archivo JSON cifrado y guarda el archivo descifrado.
 
@@ -110,7 +127,7 @@ class Chozita:
 
                 # Decodificar el contenido de base64
                 contenido = base64.b64decode(contenido)
-
+                print(1)
                 # Crear el archivo descifrado
                 with open(archivo_path, 'wb') as archivo:
                     archivo.write(contenido)
