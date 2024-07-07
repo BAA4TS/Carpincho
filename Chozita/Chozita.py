@@ -5,10 +5,12 @@ import base64
 import os
 import hashlib
 
+
 class Chozita:
     """
     FernetConCoca Biblioteca para cifrar y descifrar archivos utilizando Fernet y guardar los datos en formato JSON.
     """
+
     def __init__(self):
         pass
 
@@ -34,18 +36,22 @@ class Chozita:
         - Anotación: Comentario sobre el archivo (Opcional).
         - Usuario: Nombre del usuario (Opcional).
 
-        Guarda el archivo cifrado como `nombre_archivo_Cifrado.json`.
+        Guarda el archivo cifrado como `NombreArchivo.json`.
         """
         with open(Objetivo, 'rb') as ArchivoObjetivo:
             DatosArchivo = ArchivoObjetivo.read()
             Datos64 = base64.b64encode(DatosArchivo).decode('utf-8')
 
             ObjetoFernet = Fernet(self._Password(Password))
-            ContenidoCifrado = ObjetoFernet.encrypt(Datos64.encode()).decode('utf-8')
-
-            Directorio, NombreArchivo = os.path.split(Objetivo)
-            Nombre, Extension = os.path.splitext(NombreArchivo)
-
+            ContenidoCifrado = ObjetoFernet.encrypt(
+                Datos64.encode()).decode('utf-8')
+            if os.path.dirname(Objetivo) != '':
+                Directorio, NombreArchivo = os.path.split(Objetivo)
+                Nombre, Extension = os.path.splitext(NombreArchivo)
+                PATH = Directorio + '/' + Nombre + ".json"
+            else:
+                Nombre, Extension = os.path.splitext(Objetivo)
+                PATH = Nombre + '.json'
             FechaActual = datetime.now()
             FechaFormateada = FechaActual.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -58,7 +64,7 @@ class Chozita:
                 "Contenido": ContenidoCifrado
             }
 
-            with open(f'{Directorio}/{Nombre}Cifrado.json', 'w') as ArchivoCifrado:
+            with open(PATH, 'w') as ArchivoCifrado:
                 json.dump(DatosJson, ArchivoCifrado, indent=4)
 
     def Descifrar(self, Objetivo, Password):
@@ -71,12 +77,16 @@ class Chozita:
         """
         with open(Objetivo, 'rb') as ArchivoObjetivo:
             ConjuntoDatos = json.load(ArchivoObjetivo)
-            Directorio = os.path.dirname(Objetivo)
-            PathArchivoResultado = os.path.join(Directorio, ConjuntoDatos['Nombre'] + ConjuntoDatos['Extension'])
-            
+            if os.path.dirname(Objetivo) != '':
+                Directorio = os.path.dirname(Objetivo)
+            else:
+                Directorio = os.getcwd()
+            PathArchivoResultado = os.path.join(
+                Directorio, ConjuntoDatos['Nombre'] + ConjuntoDatos['Extension'])
             ObjetoFernet = Fernet(self._Password(Password))
             ContenidoCifrado = ConjuntoDatos['Contenido']
-            ContenidoDescifrado = ObjetoFernet.decrypt(ContenidoCifrado.encode())
+            ContenidoDescifrado = ObjetoFernet.decrypt(
+                ContenidoCifrado.encode())
 
             Contenido = base64.b64decode(ContenidoDescifrado)
 
