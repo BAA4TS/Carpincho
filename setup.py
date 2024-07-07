@@ -12,7 +12,7 @@ setup(
     description='Una mini librería de automatización de cifrado de archivos',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='',
+    url='https://github.com/BAA4TS/Carpincho',
     packages=find_packages(),  # Encuentra automáticamente los paquetes
     classifiers=[
         "Development Status :: 5 - Production/Stable",
