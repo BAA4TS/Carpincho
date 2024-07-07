@@ -14,7 +14,7 @@ class Chozita:
     def __init__(self):
         pass
 
-    def _Password(self, Password):
+    def _password(self, Password):
         """
         Genera una clave de cifrado a partir de una contraseña utilizando SHA-256 y base64.
 
@@ -42,7 +42,7 @@ class Chozita:
             DatosArchivo = ArchivoObjetivo.read()
             Datos64 = base64.b64encode(DatosArchivo).decode('utf-8')
 
-            ObjetoFernet = Fernet(self._Password(Password))
+            ObjetoFernet = Fernet(self._password(Password))
             ContenidoCifrado = ObjetoFernet.encrypt(
                 Datos64.encode()).decode('utf-8')
             if os.path.dirname(Objetivo) != '':
@@ -67,28 +67,53 @@ class Chozita:
             with open(PATH, 'w') as ArchivoCifrado:
                 json.dump(DatosJson, ArchivoCifrado, indent=4)
 
-    def Descifrar(self, Objetivo, Password):
+    def descifrar_json(self, json_path: str, password: str) -> tuple[bool, str]:
         """
-        Descifra el contenido de un archivo cifrado y guarda el archivo descifrado.
+        Descifra el contenido de un archivo JSON cifrado y guarda el archivo descifrado.
 
-        Parámetros:
-        - Objetivo: Ruta del archivo JSON cifrado.
-        - Password: Contraseña para el descifrado.
+        Args:
+            json_path (str): La ruta del archivo JSON que contiene el contenido cifrado.
+            password (str): Contraseña para descifrar el contenido cifrado.
+
+        Returns:
+            tuple[bool, str]:
+                bool: True si el descifrado fue correcto, False en caso contrario.
+                str: Mensaje de error en caso de que bool sea False, de lo contrario una cadena vacía.
         """
-        with open(Objetivo, 'rb') as ArchivoObjetivo:
-            ConjuntoDatos = json.load(ArchivoObjetivo)
-            if os.path.dirname(Objetivo) != '':
-                Directorio = os.path.dirname(Objetivo)
-            else:
-                Directorio = os.getcwd()
-            PathArchivoResultado = os.path.join(
-                Directorio, ConjuntoDatos['Nombre'] + ConjuntoDatos['Extension'])
-            ObjetoFernet = Fernet(self._Password(Password))
-            ContenidoCifrado = ConjuntoDatos['Contenido']
-            ContenidoDescifrado = ObjetoFernet.decrypt(
-                ContenidoCifrado.encode())
+        try:
+            # Cargar el JSON con el contenido cifrado
+            with open(json_path, 'rb') as contenido_json:
+                datos_json = json.load(contenido_json)
 
-            Contenido = base64.b64decode(ContenidoDescifrado)
+                # Verificar si hay un '/' en la ruta para el manejo del path
+                if os.path.dirname(json_path) != '':
+                    # Usar el path del archivo si el archivo tiene una ruta extensa
+                    # Ejemplo: src/img.png
+                    directorio_final = os.path.dirname(json_path)
+                else:
+                    # Usar el path actual si la ruta no es extensa
+                    # Ejemplo: img.png
+                    directorio_final = os.getcwd()
 
-            with open(PathArchivoResultado, 'wb') as ArchivoDescifrado:
-                ArchivoDescifrado.write(Contenido)
+                # Cargar nombre y extensión del archivo descifrado
+                archivo_path = os.path.join(
+                    directorio_final, datos_json['Nombre'] +
+                    datos_json['Extension']
+                )
+
+                # Crear la instancia Fernet para descifrar el contenido
+                instancia_fernet = Fernet(self._password(password))
+
+                # Descifrar el contenido usando la instancia Fernet
+                contenido = datos_json['Contenido']
+                contenido = instancia_fernet.decrypt(contenido.encode())
+
+                # Decodificar el contenido de base64
+                contenido = base64.b64decode(contenido)
+
+                # Crear el archivo descifrado
+                with open(archivo_path, 'wb') as archivo:
+                    archivo.write(contenido)
+                    return [True, ""]
+        except Exception as Error:
+            return [False, str(Error)]
