@@ -5,7 +5,7 @@ import base64
 import os
 import hashlib
 
-class Carpincho:
+class Chozita:
     """
     FernetConCoca Biblioteca para cifrar y descifrar archivos utilizando Fernet y guardar los datos en formato JSON.
     """
