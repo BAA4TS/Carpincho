@@ -5,14 +5,14 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name='Carpincho',
+    name='Chozita',
     version='1.0.0',
     author='baaaaa',
     author_email='devbaats@gmail.com',
     description='Una mini librería de automatización de cifrado de archivos',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/BAA4TS/Carpincho',
+    url='https://github.com/BAA4TS/Chozita',
     packages=find_packages(),  # Encuentra automáticamente los paquetes
     classifiers=[
         "Development Status :: 5 - Production/Stable",
