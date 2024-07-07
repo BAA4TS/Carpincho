@@ -127,7 +127,7 @@ class Chozita:
 
                 # Decodificar el contenido de base64
                 contenido = base64.b64decode(contenido)
-                print(1)
+                
                 # Crear el archivo descifrado
                 with open(archivo_path, 'wb') as archivo:
                     archivo.write(contenido)
