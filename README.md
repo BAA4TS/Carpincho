@@ -19,3 +19,35 @@ pip install Chozita
 
 #### Explicacion de mi idea para la implemtacion zip
 > Cifrar el contenido en el formato actual, pero el contenido ira repartido en multiples archivos pero se utilizara un zip y la funcion se encargara directamente de descomprimir y leer los archivos internos para descifrarlos y recrear el contenido original
+
+
+### Ejemplo de codigo
+```python
+from Chozita import Chozita
+
+
+# Crar la instancia
+C = Chozita()
+
+# Encryptar
+CheckValue, ErrorString = C.cifrar('img.jpg', 'password')
+if CheckValue != True:
+     print(ErrorString)
+
+# Desencryptar
+CheckValue, ErrorString = C.descifrar('img.json', 'password')
+if CheckValue != True:
+    print(ErrorString)
+
+#############################################################
+
+# Encryptar
+CheckValue, ErrorString = C.cifrar('src/img.jpg', 'password')
+if CheckValue != True:
+     print(ErrorString)
+
+# Desencryptar
+CheckValue, ErrorString = C.descifrar('src/img.json', 'password')
+if CheckValue != True:
+    print(ErrorString)
+```
