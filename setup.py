@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name='Chozita',
-    version='1.5.2',
+    version='1.5.5',
     author='baaaaa',
     author_email='devbaats@gmail.com',
     description='Una mini librería de automatización de cifrado de archivos',
