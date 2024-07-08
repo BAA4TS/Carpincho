@@ -9,6 +9,10 @@ Chozita es una mini librería para `encriptar` y `desencriptar` archivos utiliza
 ### Objetivo de Chozita
 > El objetivo de Chozita es simplificar el proceso de encriptar archivos para marcos de trabajo como `Tkinter`.
 
+```bash
+pip install Chozita
+```
+
 ### Estado Actual
 Actualmente, cuenta con dos funciones básicas para trabajar (`cifrar` y `descifrar`). Estas son las implementaciones iniciales de la librería, pero en el futuro se añadirán más métodos, como la capacidad de repartir el contenido cifrado en varios archivos JSON en lugar de uno solo, y la implementación de compresión ZIP 
 
