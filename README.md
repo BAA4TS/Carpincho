@@ -21,7 +21,10 @@ pip install Chozita
 El cifrado se realizará como en el formato actual, pero el contenido estará distribuido en múltiples archivos dentro de un archivo ZIP. La función se encargará directamente de descomprimir y leer los archivos internos para descifrarlos y recrear el contenido original.
 
 ### Notas
-La biblioteca maneja automáticamente los `PATH`. Si se indica cifrar un archivo, por ejemplo: `src/img.jpg`, el archivo JSON que contiene los datos cifrados se creará automáticamente en el mismo `PATH` con el nombre `src/img.json`. Lo mismo ocurre para ambas funciones de cifrado.
+* La biblioteca maneja automáticamente los `PATH`. Si se indica cifrar un archivo, por ejemplo: `src/img.jpg`, el archivo JSON que contiene los datos cifrados se creará automáticamente en el mismo `PATH` con el nombre `src/img.json`. Lo mismo ocurre para ambas funciones de cifrado.
+
+* Las funciones que empiezan con doble guion bajo ( __ ) no son para el uso del usuario; son funciones internas del código.
+
 
 ### Ejemplo de código
 Las funciones devuelven una tupla de datos `[bool, string]`:

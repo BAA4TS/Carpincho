@@ -13,9 +13,11 @@ class Chozita:
     def __init__(self):
         pass
 
-    def _password(self, Password):
+    def __password(self, Password):
         """
         Genera una clave de cifrado a partir de una contraseña utilizando SHA-256 y base64.
+
+        (Funcion interna no utilizar)
 
         Parámetros:
         - Password: Contraseña para generar la clave de cifrado.
@@ -27,17 +29,18 @@ class Chozita:
 
     def cifrar(self, archivo_path: str, password: str, comentario: str = None) -> tuple[bool, str]:
         """
-        Cifra el contenido de un archivo y guarda el contenido cifrado en un JSON.
+        Cifra el contenido de un archivo y guarda el contenido cifrado en un archivo JSON.
 
+        (Recomendado para archivos de hasta 15 MB)
         Args:
-            archivo_path (str): La ruta del archivo que deseas cifrar.
+            archivo_path (str): Ruta del archivo que se desea cifrar.
             password (str): Contraseña para cifrar el contenido.
-            comentario (str): Comentario adicional para dejar en el JSON.
+            comentario (str): Comentario adicional para incluir en el archivo JSON.
 
         Returns:
             tuple[bool, str]:
-                bool: True si el cifrado fue correcto, False en caso contrario.
-                str: Mensaje de error en caso de que bool sea False; de lo contrario, una cadena vacía.
+                bool: True si el cifrado fue exitoso, False en caso contrario.
+                str: Mensaje de error si ocurrió algún problema durante el cifrado; de lo contrario, cadena vacía.
         """
         try:
             # Abrir el archivo a cifrar
@@ -47,7 +50,7 @@ class Chozita:
                 datos64 = base64.b64encode(datos).decode('utf-8')
 
                 # crear la instancia fernet
-                instancia_fernet = Fernet(self._password(password))
+                instancia_fernet = Fernet(self.__password(password))
 
                 # cifrar los datos (datos64)
                 datos_cifrados = instancia_fernet.encrypt(
@@ -118,7 +121,7 @@ class Chozita:
                 )
 
                 # Crear la instancia Fernet para descifrar el contenido
-                instancia_fernet = Fernet(self._password(password))
+                instancia_fernet = Fernet(self.__password(password))
 
                 # Descifrar el contenido usando la instancia Fernet
                 contenido = datos_json['Contenido']
